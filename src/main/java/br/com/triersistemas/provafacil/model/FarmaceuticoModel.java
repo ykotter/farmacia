@@ -3,21 +3,14 @@ package br.com.triersistemas.provafacil.model;
 import java.util.Objects;
 
 public class FarmaceuticoModel extends PessoaModel {
-	
-	public FarmaceuticoModel (String pis, String documento) {
-		 super(pis, documento);
+
+	private String pis;
+
+	public FarmaceuticoModel (String nome, String documento, String pis) {
+		super(nome, documento);
+		this.pis = pis;
 	}
-	@Override
-	public Boolean isDocumentoValido() {
-        if (Objects.isNull(super.getDocumento())
-                || super.getDocumento().length() != 11) {
-            return false;
-        }
-        String preDoc = super.getDocumento().substring(0, 9);
-        String cpfValido = this.gerarCpf(preDoc);
-        return super.getDocumento().equals(cpfValido);
-    }
-	
+
 	@Override
 	public String getDocumentoFormatado() {
 		if (!this.isDocumentoValido()) {
@@ -25,30 +18,54 @@ public class FarmaceuticoModel extends PessoaModel {
 		}
 		return this.getDocumento().replaceAll("(\\d{3})(\\d{3})(\\d{3})(\\d{2})", "$1.$2.$3-$4");
 	}
+
+	@Override
+	public Boolean isDocumentoValido() {
+		if (Objects.isNull(super.getDocumento())
+				|| super.getDocumento().length() != 11) {
+			return false;
+		}
+		Integer primeiroVerificador = 0;
+		Integer segundoVerificador = 0;
+		Integer soma = 0;
+		Integer somaSegundo = 0;
+		Integer j = 1;
+		char[] arrayDoc = super.getDocumento().toCharArray();
+		String[] arrayString = new String[arrayDoc.length];
+		Integer[] digitosInt = new Integer[arrayDoc.length];
+
+		for (int i = 0; i < arrayDoc.length-2; i++) {
+			arrayString[i] = String.valueOf(arrayDoc[i]);
+			digitosInt[i] = Integer.parseInt(arrayString[i]);
+			soma += digitosInt[i] * j;
+			j++;
+		}
+		primeiroVerificador = soma % 11;
+		if (primeiroVerificador == 10) {
+			primeiroVerificador = 0;
+		}
+		j = 0;
+		for (int i = 0; i < arrayDoc.length-1; i++) {
+			arrayString[i] = String.valueOf(arrayDoc[i]);
+			digitosInt[i] = Integer.parseInt(arrayString[i]);
+			somaSegundo += digitosInt[i] * j;
+			j++;
+		}
+		segundoVerificador = somaSegundo % 11;
+		if (segundoVerificador == 10) {
+			segundoVerificador = 0;
+		}
+
+		for (int i = 0; i < digitosInt.length; i++) {
+			arrayString[i] = String.valueOf(arrayDoc[i]);
+		}
+		if (primeiroVerificador.equals(Integer.parseInt(arrayString[9])) && segundoVerificador.equals(Integer.parseInt(arrayString[10]))) {
+			return true;
+		}
+		return false;
+	}
 	
-	 private String gerarCpf(final String preDocumento) {
-
-	        String preDoc = preDocumento;
-	        char[] numeros = preDoc.toCharArray();
-	        Integer soma = 0;
-
-	        for (int i = numeros.length; i > 0; i--) {
-	            Integer num = Integer.valueOf(String.valueOf(numeros[i - 1]));
-	            soma += (num * i);
-	        }
-	        Integer dv1 = soma % 11;
-
-	        preDoc = preDoc + (dv1.equals(10) ? 0 : dv1);
-	        numeros = preDoc.toCharArray();
-	        soma = 0;
-
-	        for (int i = numeros.length - 1; i >= 0; i--) {
-	            Integer num = Integer.valueOf(String.valueOf(numeros[i]));
-	            soma += (num * i);
-	        }
-	        Integer dv2 = soma % 11;
-
-	        return preDoc + (dv2.equals(10) ? 0 : dv2);
-	    }
-
+	public String getPis() {
+		return pis;
+	}
 }

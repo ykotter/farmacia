@@ -19,8 +19,8 @@ public class ProdutoController {
 	
 	@GetMapping("/cadastrar")
 	public ProdutoModel CadastrarProduto(@RequestParam(value = "nome") String nome, 
-								   @RequestParam(value = "tipo") EnumProdutoModel tipo,
-								   @RequestParam(value = "valor") BigDecimal valor)
+								         @RequestParam(value = "tipo") EnumProdutoModel tipo,
+								         @RequestParam(value = "valor") BigDecimal valor)
 	{
 		
 		ProdutoModel p = new ProdutoModel(nome, valor, tipo);
@@ -30,9 +30,9 @@ public class ProdutoController {
 	
 	@GetMapping("/alterar")
 	public ProdutoModel AlterarProduto(@RequestParam(value = "id") Long id,
-			                          @RequestParam(value = "nome") String nome, 
-								      @RequestParam(value = "tipo") EnumProdutoModel tipo,
-								      @RequestParam(value = "valor") BigDecimal valor)
+			                           @RequestParam(value = "nome") String nome, 
+								       @RequestParam(value = "tipo") EnumProdutoModel tipo,
+								       @RequestParam(value = "valor") BigDecimal valor)
 	{
 		for (ProdutoModel p : SalvaDados.produtos) {
 			if (id.equals(p.getId())) {

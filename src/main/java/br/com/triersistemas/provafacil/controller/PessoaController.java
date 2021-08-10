@@ -19,18 +19,20 @@ public class PessoaController {
 
 	@GetMapping("/cadastrar-farmaceutico")
 	public FarmaceuticoModel CadastrarFamaceutico(@RequestParam(value = "nome") String nome, 
-			@RequestParam(value = "pis") String pis)
+			                                      @RequestParam(value = "documento") String documento,
+			                                      @RequestParam(value = "pis") String pis)
 	{
-		FarmaceuticoModel f = new FarmaceuticoModel(nome, pis);
+		FarmaceuticoModel f = new FarmaceuticoModel(nome, documento, pis);
 		SalvaDados.pessoas.add(f);
 		return f;
 	}
 
 	@GetMapping("/cadastrar-cliente")
 	public ClienteModel Cadastrarcliente(@RequestParam(value = "nome") String nome, 
-			@RequestParam(value = "sintoma") String sintoma)
+			                             @RequestParam(value = "documento") String documento,
+			                             @RequestParam(value = "sintoma") String sintoma)
 	{
-		ClienteModel c = new ClienteModel(nome, sintoma);
+		ClienteModel c = new ClienteModel(nome, documento, sintoma);
 		SalvaDados.pessoas.add(c);
 		return c;
 	}
@@ -58,10 +60,15 @@ public class PessoaController {
 	}
 
 	@GetMapping("/validar-documento")
-	public Boolean ValidarCpf(@RequestParam(value = "id") Long id) {
+	public String ValidarCpf(@RequestParam (value = "id") Long id) {
+		String mensagem = "Documento inválido";
 		for (PessoaModel p : SalvaDados.pessoas) {
 			if (id.equals(p.getId())) {
-				PessoaModel pessoa = p;
+				if (p.isDocumentoValido()) {
+					return p.getDocumentoFormatado();
+				} else {
+					return mensagem;
+				}
 
 			}
 

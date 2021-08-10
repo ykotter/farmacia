@@ -2,6 +2,7 @@ package br.com.triersistemas.provafacil.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class PedidoModel {
@@ -19,9 +20,10 @@ private static long count = 0;
 		this.id = ++count;
 		this.status = EnumPedidoModel.AGUARDANDO_PAGAMENTO;
 		this.dataPedido = LocalDateTime.now();
+		this.itens = new ArrayList<>();
 	}
 	
-	public void addPerfume(ProdutoModel p, Integer qtd) {
+	public void adicionaProduto(ProdutoModel p, Integer qtd) {
 		if (EnumPedidoModel.PAGO.equals(this.status)) {
 			throw new RuntimeException("Pedido finalizado");
 		}
@@ -37,6 +39,11 @@ private static long count = 0;
 	public void pagar() {
 		this.status = EnumPedidoModel.PAGO;
 		this.dataPagamento = LocalDateTime.now();
+	}
+	
+	public ItemPedidoModel removerItem(ItemPedidoModel item) {
+		this.itens.remove(item);
+		return item;
 	}
 	
 	public BigDecimal getValorTotal() {
